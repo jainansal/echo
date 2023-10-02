@@ -18,3 +18,8 @@ body {
   height: 100%;
   width: 100%;
 }
+
+/* Scroll effects */
+.echo-overlay {
+  overflow: overlay;
+}
