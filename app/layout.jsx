@@ -8,7 +8,7 @@ export const metadata = {
 const RootLayout = ({ children }) => {
   return (
     <html>
-      <body>{children}</body>
+      <body className="bg-slate-950 text-slate-200">{children}</body>
     </html>
   );
 };
