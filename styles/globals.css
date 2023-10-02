@@ -19,6 +19,18 @@ body {
   width: 100%;
 }
 
+/* Default element styles */
+input {
+  background-color: inherit;
+}
+input:focus {
+  outline: none;
+}
+
+i {
+  cursor: pointer;
+}
+
 /* Scroll effects */
 .echo-overlay {
   overflow: overlay;

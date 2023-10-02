@@ -5,7 +5,14 @@ const Chat = () => {
       <div className="h-full rounded echo-overlay"></div>
 
       {/* User Input */}
-      <div className="h-16 bg-slate-800 rounded"></div>
+      <div className="bg-slate-800 rounded p-4 flex items-center">
+        <input
+          type="text"
+          placeholder="New message..."
+          className="h-full w-full"
+        />
+        <i class="fa-solid fa-paper-plane fa-lg"></i>
+      </div>
     </div>
   );
 };
