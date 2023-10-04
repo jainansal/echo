@@ -17,7 +17,8 @@ const Chat = () => {
   useEffect(() => {
     const socket = io("http://localhost:4000");
 
-    const newUser = (data) => {
+    // Event handlers
+    const handleEnterUser = (data) => {
       const message = {
         id: messages.length,
         message: `${data} has joined the chat`,
@@ -25,15 +26,23 @@ const Chat = () => {
       };
       setMessages((prev) => [...prev, message]);
     };
+    const handleLeaveUser = (data) => {
+      const message = {
+        id: messages.length,
+        message: `${data} has left the chat`,
+        sender: "Echo",
+      };
+      setMessages((prev) => [...prev, message]);
+    };
 
-    socket.on("new-user", (data) => {
-      console.log("new-user", data);
-      newUser(data);
-    });
+    // Event definitions
+    socket.on("enter-user", handleEnterUser);
+    socket.on("leave-user", handleLeaveUser);
 
     return () => {
       socket.disconnect();
-      socket.off("new-user");
+      socket.off("enter-user", handleEnterUser);
+      socket.off("leave-user", handleLeaveUser);
     };
   }, []);
 
@@ -53,15 +62,7 @@ const Chat = () => {
     <div className="bg-slate-900 p-3 h-3/4 w-3/4 lg:w-1/2 rounded-lg flex flex-col gap-2">
       {/* Conversation */}
       <div className="h-full rounded echo-overlay flex flex-col gap-2">
-        {messages.map((message) => {
-          return (
-            <Message
-              message={message.message}
-              sender={message.sender}
-              key={message.id}
-            />
-          );
-        })}
+        {renderMessages()}
       </div>
 
       {/* User Input */}
