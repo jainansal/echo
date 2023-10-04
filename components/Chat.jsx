@@ -1,30 +1,67 @@
+"use client";
+
+import { io } from "socket.io-client";
+import { useState, useEffect } from "react";
+
 import Message from "./Message";
 
 const Chat = () => {
-  const conversation = [
+  const [messages, setMessages] = useState([
     {
-      id: 1,
-      message: "Hi there",
-      sender: "User211",
+      id: 0,
+      message: "Hello",
+      sender: "Echo",
     },
-    {
-      id: 2,
-      message: "Giddy up",
-      sender: "User332",
-    },
-  ];
+  ]);
+
+  useEffect(() => {
+    const socket = io("http://localhost:4000");
+
+    const newUser = (data) => {
+      const message = {
+        id: messages.length,
+        message: `${data} has joined the chat`,
+        sender: "Echo",
+      };
+      setMessages((prev) => [...prev, message]);
+    };
+
+    socket.on("new-user", (data) => {
+      console.log("new-user", data);
+      newUser(data);
+    });
+
+    return () => {
+      socket.disconnect();
+      socket.off("new-user");
+    };
+  }, []);
 
   const renderMessages = () => {
-    return conversation.map((message) => {
-      return <Message message={message.message} sender={message.sender} key={message.id} />;
+    return messages.map((message) => {
+      return (
+        <Message
+          message={message.message}
+          sender={message.sender}
+          key={message.id}
+        />
+      );
     });
-  }
+  };
 
   return (
     <div className="bg-slate-900 p-3 h-3/4 w-3/4 lg:w-1/2 rounded-lg flex flex-col gap-2">
       {/* Conversation */}
       <div className="h-full rounded echo-overlay flex flex-col gap-2">
-        {renderMessages()}
+        {messages.map((message) => {
+          return (
+            <Message
+              message={message.message}
+              sender={message.sender}
+              key={message.id}
+            />
+          );
+        })}
       </div>
 
       {/* User Input */}
