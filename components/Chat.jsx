@@ -2,10 +2,12 @@
 
 import { io } from "socket.io-client";
 import { useState, useEffect } from "react";
+let socket;
 
 import Message from "./Message";
 
 const Chat = () => {
+  // useStates
   const [messages, setMessages] = useState([
     {
       id: 0,
@@ -14,8 +16,9 @@ const Chat = () => {
     },
   ]);
 
+  // useEffects
   useEffect(() => {
-    const socket = io("http://localhost:4000");
+    socket = io("http://localhost:4000");
 
     // Event handlers
     const handleEnterUser = (data) => {
@@ -34,18 +37,29 @@ const Chat = () => {
       };
       setMessages((prev) => [...prev, message]);
     };
+    const handleNewMessage = (data) => {
+      const message = {
+        id: messages.length,
+        message: data.message,
+        sender: data.id,
+      };
+      setMessages((prev) => [...prev, message]);
+    };
 
     // Event definitions
     socket.on("enter-user", handleEnterUser);
     socket.on("leave-user", handleLeaveUser);
+    socket.on("new-message", handleNewMessage);
 
     return () => {
       socket.disconnect();
       socket.off("enter-user", handleEnterUser);
       socket.off("leave-user", handleLeaveUser);
+      socket.off("new-message", handleNewMessage);
     };
   }, []);
 
+  // Functions
   const renderMessages = () => {
     return messages.map((message) => {
       return (
@@ -56,6 +70,13 @@ const Chat = () => {
         />
       );
     });
+  };
+
+  const sendMessage = (e) => {
+    if (e.key === "Enter" && e.target.value !== "") {
+      socket.emit("new-message", e.target.value);
+      e.target.value = "";
+    }
   };
 
   return (
@@ -71,6 +92,7 @@ const Chat = () => {
           type="text"
           placeholder="New message..."
           className="h-full w-full"
+          onKeyDown={sendMessage}
         />
       </div>
     </div>
