@@ -3,10 +3,12 @@ import Message from "./Message";
 const Chat = () => {
   const conversation = [
     {
+      id: 1,
       message: "Hi there",
       sender: "User211",
     },
     {
+      id: 2,
       message: "Giddy up",
       sender: "User332",
     },
@@ -14,7 +16,7 @@ const Chat = () => {
 
   const renderMessages = () => {
     return conversation.map((message) => {
-      return <Message message={message.message} sender={message.sender} />;
+      return <Message message={message.message} sender={message.sender} key={message.id} />;
     });
   }
 
@@ -32,7 +34,6 @@ const Chat = () => {
           placeholder="New message..."
           className="h-full w-full"
         />
-        <i class="fa-solid fa-paper-plane fa-lg"></i>
       </div>
     </div>
   );

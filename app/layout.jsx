@@ -8,7 +8,7 @@ export const metadata = {
 const RootLayout = ({ children }) => {
   return (
     <html>
-      <head>
+      {/* <head>
         <link
           rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
@@ -16,7 +16,7 @@ const RootLayout = ({ children }) => {
           crossorigin="anonymous"
           referrerpolicy="no-referrer"
         />
-      </head>
+      </head> */}
       <body className="bg-slate-950 text-slate-200">{children}</body>
     </html>
   );
