@@ -1,8 +1,8 @@
-const Message = ({ message, sender }) => {
+const Message = ({ message, sender, clientId }) => {
   return (
     <div
       className={`rounded p-2 bg-slate-800 ${
-        sender === "User332" ? "self-end" : "self-start"
+        sender === clientId ? "self-end" : "self-start"
       }`}
     >
       <p className="text-xs font-thin text-slate-500">{sender}</p>

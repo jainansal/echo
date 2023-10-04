@@ -8,6 +8,7 @@ import Message from "./Message";
 
 const Chat = () => {
   // useStates
+  const [clientId, setClientId] = useState("");
   const [messages, setMessages] = useState([
     {
       id: 0,
@@ -21,6 +22,9 @@ const Chat = () => {
     socket = io("http://localhost:4000");
 
     // Event handlers
+    const handleWelcome = (data) => {
+      setClientId(data);
+    };
     const handleEnterUser = (data) => {
       const message = {
         id: messages.length,
@@ -47,12 +51,14 @@ const Chat = () => {
     };
 
     // Event definitions
+    socket.on("welcome", handleWelcome);
     socket.on("enter-user", handleEnterUser);
     socket.on("leave-user", handleLeaveUser);
     socket.on("new-message", handleNewMessage);
 
     return () => {
       socket.disconnect();
+      socket.off("welcome", handleWelcome);
       socket.off("enter-user", handleEnterUser);
       socket.off("leave-user", handleLeaveUser);
       socket.off("new-message", handleNewMessage);
@@ -66,6 +72,7 @@ const Chat = () => {
         <Message
           message={message.message}
           sender={message.sender}
+          clientId={clientId}
           key={message.id}
         />
       );
