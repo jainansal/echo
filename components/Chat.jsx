@@ -9,6 +9,7 @@ import Message from "./Message";
 const Chat = () => {
   // useStates
   const [clientId, setClientId] = useState("");
+  const [newMessage, setNewMessage] = useState("");
   const [messages, setMessages] = useState([
     {
       id: 0,
@@ -80,9 +81,9 @@ const Chat = () => {
   };
 
   const sendMessage = (e) => {
-    if (e.key === "Enter" && e.target.value !== "") {
-      socket.emit("new-message", e.target.value);
-      e.target.value = "";
+    if (e.key === "Enter" && newMessage !== "") {
+      socket.emit("new-message", newMessage);
+      setNewMessage("");
     }
   };
 
@@ -99,8 +100,11 @@ const Chat = () => {
           type="text"
           placeholder="New message..."
           className="h-full w-full"
+          value={newMessage}
+          onChange={(e) => setNewMessage(e.target.value)}
           onKeyDown={sendMessage}
         />
+        <button onClick={sendMessage}>Send</button>
       </div>
     </div>
   );
