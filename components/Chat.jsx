@@ -1,12 +1,15 @@
 "use client";
 
 import { io } from "socket.io-client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 let socket;
 
 import Message from "./Message";
 
 const Chat = ({ username }) => {
+  // useRef
+  const messagesEndRef = useRef(null);
+
   // useStates
   const [clientId, setClientId] = useState("");
   const [newMessage, setNewMessage] = useState("");
@@ -58,6 +61,10 @@ const Chat = ({ username }) => {
     };
   }, []);
 
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
   // Functions
   const renderMessages = () => {
     return messages.map((message) => {
@@ -79,11 +86,16 @@ const Chat = ({ username }) => {
     }
   };
 
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
     <div className="bg-slate-900 p-3 h-3/4 w-3/4 lg:w-1/2 rounded-lg flex flex-col gap-2">
       {/* Conversation */}
       <div className="h-full rounded echo-overlay flex flex-col gap-2">
         {renderMessages()}
+        <div ref={messagesEndRef} />
       </div>
 
       {/* User Input */}
