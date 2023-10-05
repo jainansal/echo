@@ -5,7 +5,7 @@ const Message = ({ message, sender, clientId }) => {
 
   return (
     <div
-      className={`rounded p-2 bg-slate-800 w-3/4 ${
+      className={`rounded p-2 bg-slate-800 max-w-[75%] ${
         sender.id === clientId ? "self-end" : "self-start"
       }`}
     >
