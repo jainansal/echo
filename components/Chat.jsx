@@ -6,21 +6,15 @@ let socket;
 
 import Message from "./Message";
 
-const Chat = () => {
+const Chat = ({ username }) => {
   // useStates
   const [clientId, setClientId] = useState("");
   const [newMessage, setNewMessage] = useState("");
-  const [messages, setMessages] = useState([
-    {
-      id: 0,
-      message: "Hello",
-      sender: "Echo",
-    },
-  ]);
+  const [messages, setMessages] = useState([]);
 
   // useEffects
   useEffect(() => {
-    socket = io("http://localhost:4000");
+    socket = io("http://localhost:4000", { query: { username } });
 
     // Event handlers
     const handleWelcome = (data) => {
@@ -30,7 +24,6 @@ const Chat = () => {
       const message = {
         id: messages.length,
         message: `${data} has joined the chat`,
-        sender: "Echo",
       };
       setMessages((prev) => [...prev, message]);
     };
@@ -38,7 +31,6 @@ const Chat = () => {
       const message = {
         id: messages.length,
         message: `${data} has left the chat`,
-        sender: "Echo",
       };
       setMessages((prev) => [...prev, message]);
     };
@@ -46,7 +38,7 @@ const Chat = () => {
       const message = {
         id: messages.length,
         message: data.message,
-        sender: data.id,
+        sender: data.sender,
       };
       setMessages((prev) => [...prev, message]);
     };
