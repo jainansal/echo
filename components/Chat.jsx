@@ -2,9 +2,11 @@
 
 import { io } from "socket.io-client";
 import { useState, useEffect, useRef } from "react";
-let socket;
 
+import { X } from "react-feather";
 import Message from "./Message";
+
+let socket;
 
 const Chat = ({ username }) => {
   // useRef
@@ -14,6 +16,7 @@ const Chat = ({ username }) => {
   const [clientId, setClientId] = useState("");
   const [newMessage, setNewMessage] = useState("");
   const [messages, setMessages] = useState([]);
+  const [replyTo, setReplyTo] = useState(null);
 
   // useEffects
   useEffect(() => {
@@ -74,6 +77,7 @@ const Chat = ({ username }) => {
           sender={message.sender}
           clientId={clientId}
           key={message.id}
+          handleReply={handleReply}
         />
       );
     });
@@ -83,11 +87,22 @@ const Chat = ({ username }) => {
     if (e.key === "Enter" && newMessage !== "") {
       socket.emit("new-message", newMessage);
       setNewMessage("");
+      setReplyTo(null);
     }
   };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleReply = (message) => {
+    setReplyTo({
+      message,
+    });
+  };
+
+  const removeReply = () => {
+    setReplyTo(null);
   };
 
   return (
@@ -99,16 +114,33 @@ const Chat = ({ username }) => {
       </div>
 
       {/* User Input */}
-      <div className="bg-slate-800 rounded p-3 flex items-center">
-        <input
-          type="text"
-          placeholder="New message..."
-          className="h-full w-full"
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          onKeyDown={sendMessage}
-        />
-        <button onClick={sendMessage}>Send</button>
+      <div className="bg-slate-800 rounded p-3 flex flex-col gap-1">
+        {replyTo && (
+          <div className="flex items-center gap-2">
+            <p className="text-xs font-thin text-slate-500 cursor-pointer min-w-max">
+              Replying to:
+            </p>
+            <p className="text-xs break-words p-1 bg-slate-900 rounded">
+              {replyTo.message}
+            </p>
+            <X
+              size={16}
+              className="cursor-pointer justify-self-end"
+              onClick={removeReply}
+            />
+          </div>
+        )}
+        <div className="flex w-full">
+          <input
+            type="text"
+            placeholder="New message..."
+            className="h-full w-full"
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            onKeyDown={sendMessage}
+          />
+          <button onClick={sendMessage}>Send</button>
+        </div>
       </div>
     </div>
   );
