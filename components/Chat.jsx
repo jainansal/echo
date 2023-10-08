@@ -8,10 +8,6 @@ import Message from "./Message";
 let socket;
 
 const Chat = ({ username }) => {
-  if (!username) {
-    return <></>;
-  }
-
   // useRef
   const messagesEndRef = useRef(null);
 
@@ -60,6 +56,7 @@ const Chat = ({ username }) => {
     socket.on("leave-user", handleLeaveUser);
     socket.on("new-message", handleNewMessage);
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     return () => {
       socket.disconnect();
       socket.off("welcome", handleWelcome);
