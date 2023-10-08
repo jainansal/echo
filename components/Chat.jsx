@@ -86,10 +86,6 @@ const Chat = ({ username }) => {
   };
 
   const sendMessage = (e) => {
-    if (file) {
-      socket.emit("upload", file);
-      return;
-    }
     if (e.key === "Enter" && newMessage !== "") {
       const data = {
         message: newMessage,
