@@ -156,14 +156,14 @@ const Chat = ({ username }) => {
           </div>
         )}
         <div className="flex w-full gap-2">
-          <label>
+          {/* <label>
             <Plus size={20} className="cursor-pointer" />
             <input
               type="file"
               hidden
               onChange={handleFileChange}
             />
-          </label>
+          </label> */}
           <input
             type="text"
             placeholder="New message..."
