@@ -5,12 +5,12 @@ import { useState } from "react";
 import { ChevronDown } from "react-feather";
 
 const Message = ({ message, sender, repliedTo, clientId, handleReply }) => {
+  // useState
+  const [showOptions, setShowOptions] = useState(false);
+
   if (!sender) {
     return <div className="self-center break-words">{message}</div>;
   }
-
-  // useState
-  const [showOptions, setShowOptions] = useState(false);
 
   // Functions
   const handleHover = () => {

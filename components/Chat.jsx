@@ -8,6 +8,10 @@ import Message from "./Message";
 let socket;
 
 const Chat = ({ username }) => {
+  if (!username) {
+    return <></>;
+  }
+
   // useRef
   const messagesEndRef = useRef(null);
 
@@ -28,21 +32,21 @@ const Chat = ({ username }) => {
     };
     const handleEnterUser = (data) => {
       const message = {
-        id: messages.length,
+        id: messages?.length,
         message: `${data} has joined the chat`,
       };
       setMessages((prev) => [...prev, message]);
     };
     const handleLeaveUser = (data) => {
       const message = {
-        id: messages.length,
+        id: messages?.length,
         message: `${data} has left the chat`,
       };
       setMessages((prev) => [...prev, message]);
     };
     const handleNewMessage = (data) => {
       const message = {
-        id: messages.length,
+        id: messages?.length,
         message: data.message,
         sender: data.sender,
         repliedTo: data.repliedTo,
