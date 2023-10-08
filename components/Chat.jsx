@@ -2,8 +2,7 @@
 
 import { init } from "@/util/socket";
 import { useState, useEffect, useRef } from "react";
-
-import { X } from "react-feather";
+import { X, Send, Plus, File } from "react-feather";
 import Message from "./Message";
 
 let socket;
@@ -17,6 +16,7 @@ const Chat = ({ username }) => {
   const [newMessage, setNewMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [replyTo, setReplyTo] = useState("");
+  const [file, setFile] = useState("");
 
   // useEffects
   useEffect(() => {
@@ -72,7 +72,6 @@ const Chat = ({ username }) => {
   // Functions
   const renderMessages = () => {
     return messages.map((message, index) => {
-      console.log(message);
       return (
         <Message
           message={message.message}
@@ -87,6 +86,10 @@ const Chat = ({ username }) => {
   };
 
   const sendMessage = (e) => {
+    if (file) {
+      socket.emit("upload", file);
+      return;
+    }
     if (e.key === "Enter" && newMessage !== "") {
       const data = {
         message: newMessage,
@@ -106,8 +109,16 @@ const Chat = ({ username }) => {
     setReplyTo(message);
   };
 
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
   const removeReply = () => {
     setReplyTo("");
+  };
+
+  const removeFile = () => {
+    setFile("");
   };
 
   return (
@@ -120,6 +131,19 @@ const Chat = ({ username }) => {
 
       {/* User Input */}
       <div className="bg-slate-800 rounded p-3 flex flex-col gap-1">
+        {file && (
+          <div className="flex items-center gap-2">
+            <File size={16} />
+            <p className="text-xs break-words p-1 bg-slate-900 rounded">
+              {file.name}
+            </p>
+            <X
+              size={16}
+              className="cursor-pointer justify-self-end"
+              onClick={removeFile}
+            />
+          </div>
+        )}
         {replyTo && (
           <div className="flex items-center gap-2">
             <p className="text-xs font-thin text-slate-500 cursor-pointer min-w-max">
@@ -135,7 +159,15 @@ const Chat = ({ username }) => {
             />
           </div>
         )}
-        <div className="flex w-full">
+        <div className="flex w-full gap-2">
+          <label>
+            <Plus size={20} className="cursor-pointer" />
+            <input
+              type="file"
+              hidden
+              onChange={handleFileChange}
+            />
+          </label>
           <input
             type="text"
             placeholder="New message..."
@@ -144,7 +176,7 @@ const Chat = ({ username }) => {
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyDown={sendMessage}
           />
-          <button onClick={sendMessage}>Send</button>
+          <Send size={20} className="cursor-pointer" onClick={sendMessage} />
         </div>
       </div>
     </div>
