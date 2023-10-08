@@ -1,6 +1,6 @@
 "use client";
 
-import { io } from "socket.io-client";
+import { init } from "@/util/socket";
 import { useState, useEffect, useRef } from "react";
 
 import { X } from "react-feather";
@@ -16,11 +16,11 @@ const Chat = ({ username }) => {
   const [clientId, setClientId] = useState("");
   const [newMessage, setNewMessage] = useState("");
   const [messages, setMessages] = useState([]);
-  const [replyTo, setReplyTo] = useState(null);
+  const [replyTo, setReplyTo] = useState("");
 
   // useEffects
   useEffect(() => {
-    socket = io("http://localhost:4000", { query: { username } });
+    socket = init(username);
 
     // Event handlers
     const handleWelcome = (data) => {
@@ -45,6 +45,7 @@ const Chat = ({ username }) => {
         id: messages.length,
         message: data.message,
         sender: data.sender,
+        repliedTo: data.repliedTo,
       };
       setMessages((prev) => [...prev, message]);
     };
@@ -70,13 +71,15 @@ const Chat = ({ username }) => {
 
   // Functions
   const renderMessages = () => {
-    return messages.map((message) => {
+    return messages.map((message, index) => {
+      console.log(message);
       return (
         <Message
           message={message.message}
           sender={message.sender}
+          repliedTo={message.repliedTo}
           clientId={clientId}
-          key={message.id}
+          key={index}
           handleReply={handleReply}
         />
       );
@@ -85,9 +88,13 @@ const Chat = ({ username }) => {
 
   const sendMessage = (e) => {
     if (e.key === "Enter" && newMessage !== "") {
-      socket.emit("new-message", newMessage);
+      const data = {
+        message: newMessage,
+        replyTo,
+      };
+      socket.emit("new-message", data);
       setNewMessage("");
-      setReplyTo(null);
+      setReplyTo("");
     }
   };
 
@@ -96,13 +103,11 @@ const Chat = ({ username }) => {
   };
 
   const handleReply = (message) => {
-    setReplyTo({
-      message,
-    });
+    setReplyTo(message);
   };
 
   const removeReply = () => {
-    setReplyTo(null);
+    setReplyTo("");
   };
 
   return (
@@ -121,7 +126,7 @@ const Chat = ({ username }) => {
               Replying to:
             </p>
             <p className="text-xs break-words p-1 bg-slate-900 rounded">
-              {replyTo.message}
+              {replyTo}
             </p>
             <X
               size={16}
