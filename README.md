@@ -4,6 +4,10 @@ Echo is a dynamic digital platform that enables users to engage in instant text-
 
 ## Version history
 
+### 1.2 *future development*
+
+- send files
+
 ### 1.1 *under development*
 
 - Username on enter
