@@ -87,7 +87,7 @@ const Chat = ({ username }) => {
   };
 
   const sendMessage = (e) => {
-    if (e.key === "Enter" && newMessage !== "") {
+    if ((e === 'click' || e.key === "Enter") && newMessage !== "") {
       const data = {
         message: newMessage,
         replyTo,
@@ -173,7 +173,7 @@ const Chat = ({ username }) => {
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyDown={sendMessage}
           />
-          <Send size={20} className="cursor-pointer" onClick={sendMessage} />
+          <Send size={20} className="cursor-pointer" onClick={() => sendMessage("click")} />
         </div>
       </div>
     </div>
