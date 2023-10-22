@@ -1,10 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 
 import { ChevronDown } from "react-feather";
 
-const Message = ({ message, sender, repliedTo, clientId, handleReply }) => {
+const Message = ({
+  message,
+  sender,
+  repliedTo,
+  clientId,
+  handleReply,
+  img,
+}) => {
   // useState
   const [showOptions, setShowOptions] = useState(false);
 
@@ -52,6 +60,15 @@ const Message = ({ message, sender, repliedTo, clientId, handleReply }) => {
           </div>
         )}
       </div>
+      {img && (
+        <Image
+          src={img}
+          width={200}
+          height={200}
+          className="rounded-sm"
+          alt="new-img"
+        />
+      )}
       <p className="break-words">{message}</p>
     </div>
   );

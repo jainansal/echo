@@ -8,6 +8,8 @@ import Message from "./Message";
 let socket;
 
 const Chat = ({ username }) => {
+  const cloud = `dkap9vgv4`;
+
   // useRef
   const messagesEndRef = useRef(null);
 
@@ -45,6 +47,7 @@ const Chat = ({ username }) => {
         id: messages?.length,
         message: data.message,
         sender: data.sender,
+        img: data.img,
         repliedTo: data.repliedTo,
       };
       setMessages((prev) => [...prev, message]);
@@ -79,6 +82,7 @@ const Chat = ({ username }) => {
           sender={message.sender}
           repliedTo={message.repliedTo}
           clientId={clientId}
+          img={message.img}
           key={index}
           handleReply={handleReply}
         />
@@ -86,15 +90,33 @@ const Chat = ({ username }) => {
     });
   };
 
-  const sendMessage = (e) => {
-    if ((e === 'click' || e.key === "Enter") && newMessage !== "") {
+  const sendMessage = async (e) => {
+    if ((e === "click" || e.key === "Enter") && (newMessage !== "" || file)) {
+      let fileLink;
+      if (file) {
+        const data = new FormData();
+        data.append("file", file);
+        data.append("upload_preset", "echoch");
+        data.append("cloud_name", cloud);
+        const response = await fetch(
+          `https://api.cloudinary.com/v1_1/${cloud}/upload`,
+          {
+            method: "POST",
+            body: data,
+          }
+        );
+        const res = await response.json();
+        fileLink = res.secure_url;
+      }
       const data = {
         message: newMessage,
+        img: fileLink,
         replyTo,
       };
       socket.emit("new-message", data);
       setNewMessage("");
       setReplyTo("");
+      setFile("");
     }
   };
 
@@ -157,14 +179,15 @@ const Chat = ({ username }) => {
           </div>
         )}
         <div className="flex w-full gap-2">
-          {/* <label>
+          <label>
             <Plus size={20} className="cursor-pointer" />
             <input
               type="file"
               hidden
               onChange={handleFileChange}
+              accept="image/png, image/jpeg, image/jpg"
             />
-          </label> */}
+          </label>
           <input
             type="text"
             placeholder="New message..."
@@ -173,7 +196,11 @@ const Chat = ({ username }) => {
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyDown={sendMessage}
           />
-          <Send size={20} className="cursor-pointer" onClick={() => sendMessage("click")} />
+          <Send
+            size={20}
+            className="cursor-pointer"
+            onClick={() => sendMessage("click")}
+          />
         </div>
       </div>
     </div>
