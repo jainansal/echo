@@ -3,6 +3,7 @@
 import { init } from "@/util/socket";
 import { useState, useEffect, useRef } from "react";
 import { X, Send, Plus, File } from "react-feather";
+import { InfinitySpin } from "react-loader-spinner";
 import Message from "./Message";
 
 let socket;
@@ -19,6 +20,7 @@ const Chat = ({ username }) => {
   const [messages, setMessages] = useState([]);
   const [replyTo, setReplyTo] = useState("");
   const [file, setFile] = useState("");
+  const [loading, setLoading] = useState(true);
 
   // useEffects
   useEffect(() => {
@@ -27,6 +29,7 @@ const Chat = ({ username }) => {
     // Event handlers
     const handleWelcome = (data) => {
       setClientId(data);
+      setLoading(false);
     };
     const handleEnterUser = (data) => {
       const message = {
@@ -67,6 +70,7 @@ const Chat = ({ username }) => {
       socket.off("leave-user", handleLeaveUser);
       socket.off("new-message", handleNewMessage);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -144,7 +148,14 @@ const Chat = ({ username }) => {
     <div className="bg-slate-900 p-3 h-3/4 w-3/4 lg:w-1/2 rounded-lg flex flex-col gap-2">
       {/* Conversation */}
       <div className="h-full rounded echo-overlay flex flex-col gap-2">
-        {renderMessages()}
+        {loading ? (
+          <div className="flex items-center justify-center h-full flex-col">
+            <InfinitySpin width="200" color="#96ADC8" />
+            Establishing a connection with the server...
+          </div>
+        ) : (
+          renderMessages()
+        )}
         <div ref={messagesEndRef} />
       </div>
 
